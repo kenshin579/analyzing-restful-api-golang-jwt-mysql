@@ -14,7 +14,6 @@ var db *gorm.DB
 var err error
 var e error
 
-//이건 언제 호출되나?
 func init() {
 	fmt.Println("based init")
 
