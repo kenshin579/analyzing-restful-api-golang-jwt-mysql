@@ -26,11 +26,9 @@ var jwt_secret = os.Getenv("jwt_secret")
 
 func Login(w http.ResponseWriter, req *http.Request) {
 	user := &models.User{}
-	fmt.Println("req.Body", req.Body)
 
 	err := json.NewDecoder(req.Body).Decode(user)
 
-	//todo : 여기서 오류가 발생함
 	if err != nil {
 		utils.Respond(w, utils.Message(false, "Error while decoding request body"))
 		return
