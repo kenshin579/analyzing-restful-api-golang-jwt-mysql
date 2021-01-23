@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
+	"github.com/kenshin579/analyzing-restful-api-golang-jwt-mysql/app/models"
+	"github.com/kenshin579/analyzing-restful-api-golang-jwt-mysql/utils"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/gamorvi/restapi2/app/models"
-	u "github.com/gamorvi/restapi2/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -17,32 +18,32 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(params["id"])
 
 	if err != nil {
-		u.Respond(w, u.Message(false, "There was an error in your request"))
+		utils.Respond(w, utils.Message(false, "There was an error in your request"))
 		return
 	}
 
 	user := models.GetUser(id)
 	if user == nil {
-		u.Respond(w, u.Message(false, "User not found"))
+		utils.Respond(w, utils.Message(false, "User not found"))
 		return
 	}
 
-	resp := u.Message(true, "success")
+	resp := utils.Message(true, "success")
 	resp["data"] = user
-	u.Respond(w, resp)
+	utils.Respond(w, resp)
 	return
 }
 
 // Get all the users in the users table
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	resp := u.Message(true, "success")
+	resp := utils.Message(true, "success")
 	users := models.GetUsers()
 	if users == nil {
-		u.Respond(w, u.Message(false, "No users found"))
+		utils.Respond(w, utils.Message(false, "No users found"))
 		return
 	}
 	resp["data"] = users
-	u.Respond(w, resp)
+	utils.Respond(w, resp)
 	return
 }
 
@@ -51,14 +52,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 
 	err := json.NewDecoder(r.Body).Decode(user)
+	fmt.Println("user.Name", user.Name)
 	if err != nil {
-		u.Respond(w, u.Message(false, "Error while decoding request body"))
+		utils.Respond(w, utils.Message(false, "Error while decoding request body"))
 		return
 	}
 	defer r.Body.Close()
 
 	resp := user.Create()
-	u.Respond(w, resp)
+	utils.Respond(w, resp)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -67,19 +69,19 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["id"])
 
 	if err != nil {
-		u.Respond(w, u.Message(false, "There was an error in your request"))
+		utils.Respond(w, utils.Message(false, "There was an error in your request"))
 		return
 	}
 
 	err = models.GetUserForUpdateOrDelete(id, &user)
 	if err != nil {
-		u.Respond(w, u.Message(false, "User not found"))
+		utils.Respond(w, utils.Message(false, "User not found"))
 		return
 	}
 
 	err = json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		u.Respond(w, u.Message(false, "Error while decoding request body"))
+		utils.Respond(w, utils.Message(false, "Error while decoding request body"))
 		return
 	}
 
@@ -90,12 +92,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	// Update user here
 	err = models.UpdateUser(&user)
 	if err != nil {
-		u.Respond(w, u.Message(false, "Could not update the record"))
+		utils.Respond(w, utils.Message(false, "Could not update the record"))
 		return
 	}
-	resp := u.Message(true, "Updated successfully")
+	resp := utils.Message(true, "Updated successfully")
 	resp["data"] = user
-	u.Respond(w, resp)
+	utils.Respond(w, resp)
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -104,21 +106,21 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
-		u.Respond(w, u.Message(false, "There was an error in your request"))
+		utils.Respond(w, utils.Message(false, "There was an error in your request"))
 		return
 	}
 
 	err = models.GetUserForUpdateOrDelete(id, &user)
 	if err != nil {
-		u.Respond(w, u.Message(false, "User not found"))
+		utils.Respond(w, utils.Message(false, "User not found"))
 		return
 	}
 
 	err = models.DeleteUser(&user)
 	if err != nil {
-		u.Respond(w, u.Message(false, "Could not delete the record"))
+		utils.Respond(w, utils.Message(false, "Could not delete the record"))
 		return
 	}
-	u.Respond(w, u.Message(true, "User has been deleted successfully"))
+	utils.Respond(w, utils.Message(true, "User has been deleted successfully"))
 	return
 }

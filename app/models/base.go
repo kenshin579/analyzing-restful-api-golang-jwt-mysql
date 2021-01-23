@@ -15,6 +15,7 @@ var err error
 var e error
 
 func init() {
+	fmt.Println("based init")
 
 	username := os.Getenv("db_user")
 	password := os.Getenv("db_pass")

@@ -2,9 +2,9 @@ package models
 
 import (
 	"fmt"
+	"github.com/kenshin579/analyzing-restful-api-golang-jwt-mysql/utils"
 	"strings"
 
-	u "github.com/gamorvi/restapi2/utils"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,19 +19,19 @@ type User struct {
 func (user *User) Validate() (map[string]interface{}, bool) {
 
 	if user.Name == "" {
-		return u.Message(false, "Name should be on the payload"), false
+		return utils.Message(false, "Name should be on the payload"), false
 	}
 
 	if user.Username == "" {
-		return u.Message(false, "Email should be on the payload"), false
+		return utils.Message(false, "Email should be on the payload"), false
 	}
 
 	if !strings.Contains(user.Username, "@") {
-		return u.Message(false, "Email address is required"), false
+		return utils.Message(false, "Email address is required"), false
 	}
 
 	//All the required parameters are present
-	return u.Message(true, "success"), true
+	return utils.Message(true, "success"), true
 }
 
 func (user *User) Create() map[string]interface{} {
@@ -43,14 +43,14 @@ func (user *User) Create() map[string]interface{} {
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 5)
 
 	if err != nil {
-		u.Message(false, "There was an internal error")
+		utils.Message(false, "There was an internal error")
 		return nil
 	}
 	user.Password = string(hash)
 
 	GetDB().Create(user)
 
-	resp := u.Message(true, "success")
+	resp := utils.Message(true, "success")
 	resp["user"] = user
 	return resp
 }

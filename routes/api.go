@@ -1,9 +1,9 @@
 package routes
 
 import (
-	controllers "github.com/gamorvi/restapi2/app/controllers"
-	"github.com/gamorvi/restapi2/app/controllers/auth"
 	"github.com/gorilla/mux"
+	"github.com/kenshin579/analyzing-restful-api-golang-jwt-mysql/app/controllers"
+	"github.com/kenshin579/analyzing-restful-api-golang-jwt-mysql/app/controllers/auth"
 )
 
 func ApiRoutes(prefix string, r *mux.Router) {
@@ -12,6 +12,7 @@ func ApiRoutes(prefix string, r *mux.Router) {
 
 	s.HandleFunc("/login", auth.Login).Methods("POST")
 	s.HandleFunc("/register", controllers.CreateUser).Methods("POST")
+
 	s.HandleFunc("/users", auth.ValidateMiddleware(controllers.GetUsers)).Methods("GET")
 	s.HandleFunc("/users/{id}", auth.ValidateMiddleware(controllers.GetUser)).Methods("GET")
 	s.HandleFunc("/users", auth.ValidateMiddleware(controllers.CreateUser)).Methods("POST")

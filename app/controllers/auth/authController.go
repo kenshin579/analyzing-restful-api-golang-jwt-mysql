@@ -3,6 +3,8 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kenshin579/analyzing-restful-api-golang-jwt-mysql/app/models"
+	"github.com/kenshin579/analyzing-restful-api-golang-jwt-mysql/utils"
 	"log"
 	"net/http"
 	"os"
@@ -11,8 +13,6 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/gamorvi/restapi2/app/models"
-	u "github.com/gamorvi/restapi2/utils"
 	"github.com/gorilla/context"
 	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/crypto/bcrypt"
@@ -28,8 +28,9 @@ func Login(w http.ResponseWriter, req *http.Request) {
 	user := &models.User{}
 
 	err := json.NewDecoder(req.Body).Decode(user)
+
 	if err != nil {
-		u.Respond(w, u.Message(false, "Error while decoding request body"))
+		utils.Respond(w, utils.Message(false, "Error while decoding request body"))
 		return
 	}
 	defer req.Body.Close()
@@ -43,7 +44,7 @@ func Login(w http.ResponseWriter, req *http.Request) {
 	*/
 	result := models.GetUsername(username)
 	if result == nil {
-		u.Respond(w, u.Message(false, "Your credentials do not match our records"))
+		utils.Respond(w, utils.Message(false, "Your credentials do not match our records"))
 		return
 	}
 
@@ -51,7 +52,7 @@ func Login(w http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		fmt.Println(err)
-		u.Respond(w, u.Message(false, "Your credentials do not match our records"))
+		utils.Respond(w, utils.Message(false, "Your credentials do not match our records"))
 		return
 	}
 	// access token ttl
@@ -78,9 +79,9 @@ func CreateToken(w http.ResponseWriter, username string, password string, ttl ti
 	if error != nil {
 		fmt.Println(error)
 	}
-	resp := u.Message(true, "success")
+	resp := utils.Message(true, "success")
 	resp["data"] = JwtToken{AccessToken: tokenString}
-	u.Respond(w, resp)
+	utils.Respond(w, resp)
 	return
 }
 
@@ -98,19 +99,19 @@ func ValidateMiddleware(next http.HandlerFunc) http.HandlerFunc {
 					return []byte(jwt_secret), nil
 				})
 				if error != nil {
-					u.Respond(w, u.Message(false, error.Error()))
+					utils.Respond(w, utils.Message(false, error.Error()))
 					return
 				}
 				if token.Valid {
 					context.Set(req, "decoded", token.Claims)
 					next(w, req)
 				} else {
-					u.Respond(w, u.Message(false, "Invalid authorization token"))
+					utils.Respond(w, utils.Message(false, "Invalid authorization token"))
 					return
 				}
 			}
 		} else {
-			u.Respond(w, u.Message(false, "An authorization header is required"))
+			utils.Respond(w, utils.Message(false, "An authorization header is required"))
 			return
 		}
 	})
