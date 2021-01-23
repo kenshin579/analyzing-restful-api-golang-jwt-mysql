@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/kenshin579/analyzing-restful-api-golang-jwt-mysql/routes"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/gamorvi/restapi2/routes"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	_ "github.com/joho/godotenv/autoload"
